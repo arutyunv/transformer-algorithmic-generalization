@@ -1,0 +1,1 @@
+Create and organize a set of algorithmic benchmarks, including addition, sorting, Dyck-language completion, key-value retrieval, indexing, and function composition. Each task will include both in-distribution and out-of-distribution evaluation regimes.
