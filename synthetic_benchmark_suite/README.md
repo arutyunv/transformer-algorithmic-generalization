@@ -9,6 +9,27 @@ Implements the six benchmarks from the paper (Sec. 2.1 / Table 2):
 task-specific difficulty axis (digits, length, depth, n, ...) per the
 paper's exact numbers.
 
+## Tree
+
+synthetic_benchmark_suite/
+├── benchmark_generator/           — the main code package
+│   ├── __init__.py                — exports the public API (Task, Split, get_task, BenchmarkDataset, etc.) for easy one-line imports
+│   ├── base.py                    — foundation: Split (train/val/test/test_ood), Example (single prompt→target pair), and the abstract Task class that every benchmark must implement
+│   ├── dataset.py                 — BenchmarkDataset wrapper: provides train as an infinite on-the-fly stream and val/test/test_ood as fixed, seed-reproducible sets
+│   ├── registry.py                — "task name" → task class dictionary (get_task("addition"), etc.) to select tasks via strings
+│   ├── cli.py                     — CLI utility to preview examples or dump them to .jsonl (python -m benchmark_generator.cli ...)
+│   └── tasks/                     — the six data generators themselves
+│       ├── __init__.py            — re-exports all task classes and their configs
+│       ├── addition.py            — ADD task: number addition
+│       ├── sorting.py             — SORT task: array sorting
+│       ├── dyck.py                — DYCK task: balanced bracket sequence completion
+│       ├── keyvalue.py            — KV task: value retrieval by key from a set of key:value pairs
+│       ├── indexing.py            — INDEX task: retrieve array element by index
+│       └── composition.py         — FUNC task: compute the composition of a chain of symbolic functions
+│
+├── README.md                      — instructions for installation and usage (imports, CLI)
+└── pyproject.toml                 — metadata for `pip install -e .`, allows installing the package locally and importing it from anywhere
+
 ## Install
 
 ```bash
