@@ -27,6 +27,8 @@ synthetic_benchmark_suite/
 │       ├── indexing.py            — INDEX task: retrieve array element by index
 │       └── composition.py         — FUNC task: compute the composition of a chain of symbolic functions
 │
+├── data/
+│   ├── description.txt
 ├── README.md                      — instructions for installation and usage (imports, CLI)
 └── pyproject.toml                 — metadata for `pip install -e .`, allows installing the package locally and importing it from anywhere
 ```
