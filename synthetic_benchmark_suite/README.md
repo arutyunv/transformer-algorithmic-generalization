@@ -62,18 +62,3 @@ python -m benchmark_generator.cli --all --n 3
 python -m benchmark_generator.cli --task kv --split train --n 5000 --out kv_train.jsonl
 ```
 
-## Tests
-
-```bash
-pytest -q
-```
-
-Each task's generated target is independently recomputed from the prompt
-in `tests/test_tasks.py` (arithmetic sum, sort check, bracket-matching
-stack simulation, dict lookup, array indexing, nested function eval), plus
-a check that `test_ood` difficulty is strictly harder than `train`.
-
-## Adding a new task
-
-Subclass `benchmark_generator.base.Task`, implement `sample_difficulty`
-and `generate_one`, register it in `benchmark_generator/registry.py`.
