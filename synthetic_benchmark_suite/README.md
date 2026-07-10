@@ -10,7 +10,7 @@ task-specific difficulty axis (digits, length, depth, n, ...) per the
 paper's exact numbers.
 
 ## Tree
-
+```
 synthetic_benchmark_suite/
 ├── benchmark_generator/           — the main code package
 │   ├── __init__.py                — exports the public API (Task, Split, get_task, BenchmarkDataset, etc.) for easy one-line imports
@@ -29,6 +29,7 @@ synthetic_benchmark_suite/
 │
 ├── README.md                      — instructions for installation and usage (imports, CLI)
 └── pyproject.toml                 — metadata for `pip install -e .`, allows installing the package locally and importing it from anywhere
+```
 
 ## Install
 
