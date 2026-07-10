@@ -9,12 +9,12 @@ The project generates data for 6 different algorithmic tasks. Each task supports
 ```text
 benchmark_generator/
  ├── base.py            # Core architecture and CLI logic
- ├── addition.py        # Task: Long Addition
- ├── composition.py     # Task: Function Composition
- ├── dyck.py            # Task: Dyck Completion
- ├── indexing.py        # Task: Array Indexing
- ├── keyvalue.py        # Task: Key-Value Retrieval
- └── sorting.py         # Task: Array Sorting
+ ├── addition.py        # Long Addition
+ ├── composition.py     # Function Composition
+ ├── dyck.py            # Dyck Completion
+ ├── indexing.py        # Array Indexing
+ ├── keyvalue.py        # Key-Value Retrieval
+ └── sorting.py         # Array Sorting
 ```
 
 ## File Descriptions
