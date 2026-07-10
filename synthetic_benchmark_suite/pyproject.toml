@@ -1,0 +1,12 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "benchmark-generator"
+version = "0.1.0"
+description = "Synthetic algorithmic-task generator for transformer architecture ablations"
+requires-python = ">=3.10"
+
+[tool.setuptools.packages.find]
+include = ["benchmark_generator*"]
