@@ -74,3 +74,25 @@ class Task(ABC):
         rng = random.Random(seed)
         while True:
             yield self.generate(split, rng)
+
+def run_task_cli(task: Task):
+    import argparse
+    import json
+    
+    p = argparse.ArgumentParser(description=f"Generator for {task.name}")
+    p.add_argument("--split", choices=[s.value for s in Split], default="train")
+    p.add_argument("--n", type=int, default=10)
+    p.add_argument("--seed", type=int, default=0)
+    p.add_argument("--out", type=str, default=None, help="Save to JSONL file")
+    args = p.parse_args()
+
+    examples = task.generate_many(Split(args.split), args.n, args.seed)
+
+    if args.out:
+        with open(args.out, "w", encoding="utf-8") as f:
+            for ex in examples:
+                f.write(json.dumps(ex.to_dict(), ensure_ascii=False) + "\n")
+        print(f"Saved {len(examples)} examples -> {args.out}")
+    else:
+        for ex in examples:
+            print(f"{ex.prompt} -> {ex.target}  (meta={ex.meta})")

@@ -1,14 +1,12 @@
-"""Function Composition (FUNC).
-
-Paper spec: apply a chain of symbolic functions to an argument.
-  - train/val/test: 2-hop compositions (depth 2-3)
-  - test_ood: 3- and 4- hop -> generalised to depth 5-10
-  - example: "f(x)=x+2; g(x)=2x; g(f(3)) =" -> "10"
-
-Functions are drawn from {x+c, x-c, c*x} with small integer constants,
-named f, g, h, ... in application order (f applied first / innermost,
-matching the paper's example g(f(3))).
 """
+Task: Function Composition (FUNC). Apply a chained sequence of symbolic mathematical functions.
+Parameters:
+  - Train/Val/Test: depth 2-3
+  - Test-OOD: depth 5-10
+Example:
+  "f(x)=x+4; g(x)=x+3; g(f(8)) =" -> "15"
+"""
+
 from __future__ import annotations
 
 import random
@@ -16,7 +14,7 @@ import string
 from dataclasses import dataclass, field
 from typing import Any, Dict, Tuple
 
-from ..base import Split, Task
+from base import Split, Task
 
 FUNC_NAMES = list(string.ascii_lowercase[5:16])  # f, g, h, i, ... (avoid x)
 
@@ -74,3 +72,8 @@ class FuncTask(Task):
         prompt = "; ".join(definitions) + f"; {call_expr} ="
         target = str(val)
         return prompt, target
+
+
+if __name__ == "__main__":
+    from base import run_task_cli
+    run_task_cli(FuncTask())

@@ -1,10 +1,12 @@
-"""Indexing (INDEX).
-
-Paper spec: return the element at a given integer index of a sequence.
-  - train/val/test: length 16 and 64
-  - test_ood: length 256 and 1024
-  - example: "ARR q w e r t IDX 3 =" -> "r"
 """
+Task: Indexing (INDEX). Return the element at a specific integer index from a sequence.
+Parameters:
+  - Train/Val/Test: array lengths 16 and 64
+  - Test-OOD: array lengths 256 and 1024
+Example:
+  "ARR s u r t v c a d u g t s d m c l IDX 3 =" -> "t"
+"""
+
 from __future__ import annotations
 
 import random
@@ -12,7 +14,7 @@ import string
 from dataclasses import dataclass, field
 from typing import Any, Dict, Tuple
 
-from ..base import Split, Task
+from base import Split, Task
 
 
 @dataclass
@@ -43,3 +45,8 @@ class IndexTask(Task):
         prompt = "ARR " + " ".join(arr) + f" IDX {idx} ="
         target = arr[idx]
         return prompt, target
+
+
+if __name__ == "__main__":
+    from base import run_task_cli
+    run_task_cli(IndexTask())

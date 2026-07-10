@@ -1,22 +1,19 @@
-"""Key-Value Retrieval (KV).
-
-Paper spec: n key-value pairs followed by a query key -> retrieve the
-matching value.
-  - train/val/test: n = 16 and 64 pairs
-  - test_ood: n = 256 and 1024 pairs
-  - example: "k17:v93 k04:v12 QUERY k04 =" -> "v12"
-
-Keys are sampled without replacement from a pool large enough to
-guarantee uniqueness even at n=1024 (address-content separation only
-makes sense if keys are unique).
 """
+Task: Key-Value Retrieval (KV). Retrieve the target value for a queried key from a padded key-value dict.
+Parameters:
+  - Train/Val/Test: 16 and 64 pairs
+  - Test-OOD: 256 and 1024 pairs
+Example:
+  "k0037:v735 k0056:v126 k0011:v490 QUERY k0011 =" -> "v490"
+"""
+
 from __future__ import annotations
 
 import random
 from dataclasses import dataclass, field
 from typing import Any, Dict, Tuple
 
-from ..base import Split, Task
+from base import Split, Task
 
 
 @dataclass
@@ -30,6 +27,9 @@ class KVConfig:
     value_range: Tuple[int, int] = (0, 999)
     # key pool multiplier relative to n, must stay unique at largest n (1024)
     key_pool_multiplier: int = 8
+
+    key_width: int = 4
+    value_width: int = 3
 
 
 class KVTask(Task):
@@ -52,7 +52,14 @@ class KVTask(Task):
         query_idx = rng.randrange(n)
         query_key, answer = keys[query_idx], values[query_idx]
 
-        body = " ".join(f"k{k}:v{v}" for k, v in zip(keys, values))
-        prompt = f"{body} QUERY k{query_key} ="
-        target = f"v{answer}"
+        w_k = self.config.key_width
+        w_v = self.config.value_width
+        body = " ".join(f"k{k:0{w_k}d}:v{v:0{w_v}d}" for k, v in zip(keys, values))
+        prompt = f"{body} QUERY k{query_key:0{w_k}d} ="
+        target = f"v{answer:0{w_v}d}"
         return prompt, target
+
+
+if __name__ == "__main__":
+    from base import run_task_cli
+    run_task_cli(KVTask())

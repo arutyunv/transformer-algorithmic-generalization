@@ -1,67 +1,57 @@
-# benchmark_generator
+# Synthetic Benchmark Generator
 
-Synthetic algorithmic-task generator for "How Transformer Architecture
-Design Choices Affects Generalization on Algorithmic Tasks".
+A synthetic dataset (benchmark) generator for testing the algorithmic generalization of language models (based on the Transformer length generalization paper). 
 
-Implements the six benchmarks from the paper (Sec. 2.1 / Table 2):
-`addition`, `sorting`, `dyck`, `kv`, `indexing`, `func` — each with
-`train / val / test / test_ood` regimes, where `test_ood` shifts the
-task-specific difficulty axis (digits, length, depth, n, ...) per the
-paper's exact numbers.
+The project generates data for 6 different algorithmic tasks. Each task supports a base difficulty (`train`, `val`, `test`) and an increased difficulty regime to test Out-Of-Distribution generalization (`test_ood`), where sequence length or nesting depth is scaled up.
 
-## Tree
-```
-synthetic_benchmark_suite/
-├── benchmark_generator/           — the main code package
-│   ├── __init__.py                — exports the public API (Task, Split, get_task, BenchmarkDataset, etc.) for easy one-line imports
-│   ├── base.py                    — foundation: Split (train/val/test/test_ood), Example (single prompt→target pair), and the abstract Task class that every benchmark must implement
-│   ├── dataset.py                 — BenchmarkDataset wrapper: provides train as an infinite on-the-fly stream and val/test/test_ood as fixed, seed-reproducible sets
-│   ├── registry.py                — "task name" → task class dictionary (get_task("addition"), etc.) to select tasks via strings
-│   ├── cli.py                     — CLI utility to preview examples or dump them to .jsonl (python -m benchmark_generator.cli ...)
-│   └── tasks/                     — the six data generators themselves
-│       ├── __init__.py            — re-exports all task classes and their configs
-│       ├── addition.py            — ADD task: number addition
-│       ├── sorting.py             — SORT task: array sorting
-│       ├── dyck.py                — DYCK task: balanced bracket sequence completion
-│       ├── keyvalue.py            — KV task: value retrieval by key from a set of key:value pairs
-│       ├── indexing.py            — INDEX task: retrieve array element by index
-│       └── composition.py         — FUNC task: compute the composition of a chain of symbolic functions
-│
-├── data/
-│   ├── description.txt
-├── README.md                      — instructions for installation and usage (imports, CLI)
-└── pyproject.toml                 — metadata for `pip install -e .`, allows installing the package locally and importing it from anywhere
+## Project Structure
+
+```text
+benchmark_generator/
+ ├── base.py            # Core architecture and CLI logic
+ ├── addition.py        # Task: Long Addition
+ ├── composition.py     # Task: Function Composition
+ ├── dyck.py            # Task: Dyck Completion
+ ├── indexing.py        # Task: Array Indexing
+ ├── keyvalue.py        # Task: Key-Value Retrieval
+ └── sorting.py         # Task: Array Sorting
 ```
 
-## Install
+## File Descriptions
 
+*   **`base.py`** — The core architecture. It contains the base abstract `Task` class, dataclasses for storing generated examples, and a shared `run_task_cli` function that provides a unified command-line interface for all generators. It does not generate data on its own but is utilized by all other scripts.
+*   **`addition.py`** (Long Addition) — Generates examples of digit-by-digit addition of two large numbers. The numbers are presented in a reversed-digit format for compatibility with RASP-L algorithmic setups.
+*   **`composition.py`** (Function Composition) — Generates chained sequences of mathematical functions (e.g., $f(x)=x+2$, $g(x)=3x$) and computes the final value of a nested call (e.g., $g(f(2))$).
+*   **`dyck.py`** (Dyck Completion) — Generates prefixes of random balanced bracket sequences using 3 types of brackets. The task is to predict the minimal required closing suffix in LIFO order.
+*   **`indexing.py`** (Indexing) — The task is to extract an element from a randomly generated array at a specified integer index.
+*   **`keyvalue.py`** (Key-Value Retrieval) — Generates a dictionary of key-value pairs (with fixed zero-padding widths to avoid tokenization artifacts) and queries the value for a randomly selected key.
+*   **`sorting.py`** (Array Sorting) — Generates sequences of random integers (from 0 to 99) and their corresponding arrays sorted in ascending order.
+
+## How to Run the Code
+
+Each generator is a fully independent executable script. They all support the exact same command-line arguments.
+
+### Basic Run
+Prints 10 examples from the `train` split directly to your terminal:
 ```bash
-cd benchmark_generator
-pip install -e .        # or just add this dir to PYTHONPATH
+python addition.py
 ```
 
-## Quick use
-
-```python
-from benchmark_generator import get_task, BenchmarkDataset, Split
-
-task = get_task("addition")
-ds = BenchmarkDataset(task, seed=0)
-
-# infinite, never-memorised training stream
-train_stream = ds.train_stream()
-example = next(train_stream)
-print(example.prompt, "->", example.target)
-
-# fixed, reproducible eval sets (same across every architecture ablation)
-test_ood_set = ds.eval_set(Split.TEST_OOD, n=1000)
-```
-
-## CLI
-
+### Generating Complex Examples (OOD)
+Use the `--split` flag to change the difficulty regime (available: `train`, `val`, `test`, `test_ood`). 
+To change the number of generated examples, use the `--n` flag:
 ```bash
-python -m benchmark_generator.cli --task dyck --split test_ood --n 5
-python -m benchmark_generator.cli --all --n 3
-python -m benchmark_generator.cli --task kv --split train --n 5000 --out kv_train.jsonl
+python keyvalue.py --split test_ood --n 5
 ```
 
+### Saving the Dataset to a File
+To generate a complete dataset and save it in `.jsonl` format, use the `--out` flag:
+```bash
+python dyck.py --split train --n 10000 --out dyck_train.jsonl
+```
+
+### Available CLI Arguments:
+*   `--split` *(str)*: Select the difficulty split (`train`, `val`, `test`, `test_ood`). Default is `train`.
+*   `--n` *(int)*: The number of examples to generate. Default is 10.
+*   `--seed` *(int)*: Random seed for reproducibility. Default is 0.
+*   `--out` *(str)*: File path to save the output (in JSON Lines format). If not provided, the output is printed to the console.

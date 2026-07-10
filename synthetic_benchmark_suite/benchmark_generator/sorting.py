@@ -1,17 +1,19 @@
-"""Array Sorting (SORT).
-
-Paper spec: integers drawn uniformly from [0, 99].
-  - train/val/test: length 8 and 16
-  - test_ood: length 32 and 64
-  - example: "7 2 9 1 4 =" -> "1 2 4 7 9"
 """
+Task: Array Sorting (SORT). Sort a sequence of random integers (0-99) in ascending order.
+Parameters:
+  - Train/Val/Test: array lengths 8 and 16
+  - Test-OOD: array lengths 32 and 64
+Example:
+  "SORT 79 32 68 90 77 18 39 12 =" -> "12 18 32 39 68 77 79 90"
+"""
+
 from __future__ import annotations
 
 import random
 from dataclasses import dataclass, field
 from typing import Any, Dict, Tuple
 
-from ..base import Split, Task
+from base import Split, Task
 
 
 @dataclass
@@ -39,6 +41,11 @@ class SortingTask(Task):
         n = params["length"]
         lo, hi = self.config.value_range
         values = [rng.randint(lo, hi) for _ in range(n)]
-        prompt = " ".join(map(str, values)) + " ="
+        prompt = "SORT " + " ".join(map(str, values)) + " ="
         target = " ".join(map(str, sorted(values)))
         return prompt, target
+
+
+if __name__ == "__main__":
+    from base import run_task_cli
+    run_task_cli(SortingTask())

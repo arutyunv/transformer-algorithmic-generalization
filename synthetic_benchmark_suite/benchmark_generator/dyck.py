@@ -1,26 +1,19 @@
-"""Dyck-language Completion (DYCK).
-
-Paper spec: k=3 bracket types. Given a prefix of a balanced-bracket
-string, predict the *minimal* closing suffix (i.e. exactly the
-brackets needed to close everything currently open, in LIFO order).
-
-  - train/val/test: nesting depth 2-4, length <= 20
-  - test_ood: nesting depth 8-16, length 21-40
-  - example: "COMPLETE (()( =" -> "))"
-
-We build the prompt with a random open/close walk bounded by a max
-nesting depth and a target length, then read the target directly off
-the open-bracket stack instead of continuing the random walk - this
-guarantees the suffix really is the *minimal* one (only closes, no
-extra opens), matching the paper's definition.
 """
+Task: Dyck Completion (DYCK). Predict the minimal closing suffix for a balanced-bracket string prefix (k=3 types).
+Parameters:
+  - Train/Val/Test: nesting depth 2-4 (lengths 10-20)
+  - Test-OOD: nesting depth 8-16 (lengths 21-40)
+Example:
+  "COMPLETE (){}{{}}(){ =" -> "}"
+"""
+
 from __future__ import annotations
 
 import random
 from dataclasses import dataclass, field
 from typing import Any, Dict, Tuple
 
-from ..base import Split, Task
+from base import Split, Task
 
 PAIRS = {"(": ")", "[": "]", "{": "}"}
 OPENS = list(PAIRS.keys())
@@ -83,3 +76,8 @@ class DyckTask(Task):
         prompt = "COMPLETE " + "".join(chars) + " ="
         target = "".join(PAIRS[c] for c in reversed(stack))
         return prompt, target
+    
+
+if __name__ == "__main__":
+    from base import run_task_cli
+    run_task_cli(DyckTask())

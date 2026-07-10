@@ -14,7 +14,7 @@ import random
 from dataclasses import dataclass, field
 from typing import Any, Dict, Tuple
 
-from ..base import Split, Task
+from base import Split, Task
 
 
 @dataclass
@@ -57,5 +57,9 @@ class AdditionTask(Task):
         else:
             a_str, b_str, t_str = str(a), str(b), str(s)
 
-        prompt = f"{a_str} {b_str} ="
+        prompt = f"ADD {a_str} {b_str} ="
         return prompt, t_str
+    
+if __name__ == "__main__":
+    from base import run_task_cli
+    run_task_cli(AdditionTask())
