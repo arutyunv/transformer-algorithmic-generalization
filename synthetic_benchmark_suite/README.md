@@ -7,21 +7,24 @@ The project generates data for 6 different algorithmic tasks. Each task supports
 ## Project Structure
 
 ```text
-benchmark_generator/
- ├── base.py            # Core architecture and CLI logic
- ├── addition.py        # Long Addition
- ├── composition.py     # Function Composition
- ├── dyck.py            # Dyck Completion
- ├── indexing.py        # Array Indexing
- ├── keyvalue.py        # Key-Value Retrieval
- └── sorting.py         # Array Sorting
+synthetic_benchmark_suite/
+├── benchmark_generator/
+│   ├── base.py                 # Core architecture and CLI logic
+│   ├── addition.py             # Long Addition
+│   ├── composition.py          # Function Composition
+│   ├── dyck.py                 # Dyck Completion
+│   ├── indexing.py             # Array Indexing
+│   ├── keyvalue.py             # Key-Value Retrieval
+│   └── sorting.py              # Array Sorting
+├── data/                       # Directory for generated output data files (JSONL)
+└── README.md                   
 ```
 
 ## File Descriptions
 
 *   **`base.py`** — The core architecture. It contains the base abstract `Task` class, dataclasses for storing generated examples, and a shared `run_task_cli` function that provides a unified command-line interface for all generators. It does not generate data on its own but is utilized by all other scripts.
 *   **`addition.py`** (Long Addition) — Generates examples of digit-by-digit addition of two large numbers. The numbers are presented in a reversed-digit format for compatibility with RASP-L algorithmic setups.
-*   **`composition.py`** (Function Composition) — Generates chained sequences of mathematical functions (e.g., $f(x)=x+2$, $g(x)=3x$) and computes the final value of a nested call (e.g., $g(f(2))$).
+*   **`composition.py`** (Function Composition) — Generates chained sequences of mathematical functions (e.g., $f(x)=x+2$, $g(x)=3x$) and computes the final value of a nested call (e.g., g(f(2)) ).
 *   **`dyck.py`** (Dyck Completion) — Generates prefixes of random balanced bracket sequences using 3 types of brackets. The task is to predict the minimal required closing suffix in LIFO order.
 *   **`indexing.py`** (Indexing) — The task is to extract an element from a randomly generated array at a specified integer index.
 *   **`keyvalue.py`** (Key-Value Retrieval) — Generates a dictionary of key-value pairs (with fixed zero-padding widths to avoid tokenization artifacts) and queries the value for a randomly selected key.
